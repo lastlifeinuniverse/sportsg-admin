@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Sessions{% endblock %}
+{% block page_title %}Sessions{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <p class="text-muted mb-0">All logged sessions across programmes.</p>
+  <a href="{{ url_for('log_session') }}" class="btn btn-sg px-4"><i class="bi bi-plus-lg me-1"></i>Log Session</a>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr>
+          <th class="ps-3">Date</th>
+          <th>Programme</th>
+          <th>Coach</th>
+          <th class="text-center">Duration (hrs)</th>
+          <th class="text-center">Total Attendees</th>
+          <th>Notes</th>
+          <th class="text-center no-print">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in sessions %}
+        <tr>
+          <td class="ps-3" style="white-space:nowrap">{{ s.session_date }}</td>
+          <td class="fw-semibold">{{ s.programme_name }}</td>
+          <td>{{ s.coach_name or '—' }}</td>
+          <td class="text-center">{{ s.duration_hours }}</td>
+          <td class="text-center">
+            <span class="badge rounded-pill" style="background:#ede9fe;color:#5b21b6;font-size:0.85rem;padding:0.3em 0.8em">
+              {{ s.total_attendees }}
+            </span>
+          </td>
+          <td class="text-muted small">{{ s.notes or '—' }}</td>
+          <td class="text-center no-print">
+            <form method="POST" action="{{ url_for('delete_session', session_id=s.id) }}" class="d-inline"
+                  onsubmit="return confirm('Delete this session record?')">
+              <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-center text-muted py-5">No sessions logged yet. <a href="{{ url_for('log_session') }}">Log the first one.</a></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

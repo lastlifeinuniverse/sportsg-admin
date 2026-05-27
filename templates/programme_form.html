@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header p-3"><i class="bi bi-journal-bookmark me-2 text-danger"></i>{{ title }}</div>
+      <div class="card-body p-4">
+        <form method="POST">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Programme Name <span class="text-danger">*</span></label>
+            <input type="text" name="name" class="form-control" required
+                   value="{{ programme.name if programme else '' }}">
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Description</label>
+            <textarea name="description" class="form-control" rows="2">{{ programme.description if programme else '' }}</textarea>
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Coach</label>
+              <select name="coach_id" class="form-select">
+                <option value="">— Unassigned —</option>
+                {% for c in coaches %}
+                <option value="{{ c.id }}" {% if programme and programme.coach_id == c.id %}selected{% endif %}>
+                  {{ c.name }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Category</label>
+              <select name="category" class="form-select">
+                <option value="">— Select —</option>
+                {% for cat in categories %}
+                <option value="{{ cat }}" {% if programme and programme.category == cat %}selected{% endif %}>{{ cat }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Status</label>
+              <select name="status" class="form-select">
+                {% for s in statuses %}
+                <option value="{{ s }}" {% if programme and programme.status == s %}selected{% elif not programme and s == 'Active' %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Frequency</label>
+              <select name="frequency" class="form-select">
+                <option value="">— Select —</option>
+                {% for f in frequencies %}
+                <option value="{{ f }}" {% if programme and programme.frequency == f %}selected{% endif %}>{{ f }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Location / Venue</label>
+            <input type="text" name="location" class="form-control"
+                   value="{{ programme.location if programme else '' }}"
+                   placeholder="e.g. Bishan Community Club">
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Start Date</label>
+              <input type="date" name="start_date" class="form-control"
+                     value="{{ programme.start_date if programme else '' }}">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">End Date</label>
+              <input type="date" name="end_date" class="form-control"
+                     value="{{ programme.end_date if programme else '' }}">
+            </div>
+          </div>
+          <div class="d-flex gap-2 mt-4">
+            <button type="submit" class="btn btn-sg px-4">Save Programme</button>
+            <a href="{{ url_for('programmes') }}" class="btn btn-outline-secondary px-4">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

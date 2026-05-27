@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Programmes{% endblock %}
+{% block page_title %}Programmes{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <p class="text-muted mb-0">All Sport Care programmes and their current status.</p>
+  <a href="{{ url_for('add_programme') }}" class="btn btn-sg px-4"><i class="bi bi-plus-lg me-1"></i>Add Programme</a>
+</div>
+
+<!-- Status filter tabs -->
+<ul class="nav nav-tabs mb-3 no-print" id="statusTabs">
+  <li class="nav-item"><a class="nav-link active" href="#" data-filter="all">All</a></li>
+  {% for s in statuses %}
+  <li class="nav-item"><a class="nav-link" href="#" data-filter="{{ s }}">{{ s }}</a></li>
+  {% endfor %}
+</ul>
+
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0" id="progTable">
+      <thead>
+        <tr>
+          <th class="ps-3">Programme</th>
+          <th>Coach</th>
+          <th>Category</th>
+          <th>Location</th>
+          <th>Frequency</th>
+          <th class="text-center">Status</th>
+          <th class="text-center">Sessions</th>
+          <th class="text-center">Beneficiaries</th>
+          <th class="text-center no-print">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in programmes %}
+        <tr data-status="{{ p.status }}">
+          <td class="ps-3">
+            <div class="fw-semibold">{{ p.name }}</div>
+            {% if p.description %}
+            <div class="text-muted" style="font-size:0.78rem">{{ p.description[:60] }}{% if p.description|length > 60 %}…{% endif %}</div>
+            {% endif %}
+          </td>
+          <td>{{ p.coach_name or '—' }}</td>
+          <td><span class="text-muted small">{{ p.category or '—' }}</span></td>
+          <td><span class="text-muted small">{{ p.location or '—' }}</span></td>
+          <td><span class="text-muted small">{{ p.frequency or '—' }}</span></td>
+          <td class="text-center">
+            <span class="status-badge
+              {% if p.status == 'Active' %}badge-Active
+              {% elif p.status == 'Completed' %}badge-Completed
+              {% elif p.status == 'On Hold' %}badge-On Hold
+              {% else %}badge-Cancelled{% endif %}">
+              {{ p.status }}
+            </span>
+          </td>
+          <td class="text-center">{{ p.session_count }}</td>
+          <td class="text-center fw-semibold">{{ p.total_beneficiaries }}</td>
+          <td class="text-center no-print">
+            <a href="{{ url_for('edit_programme', prog_id=p.id) }}" class="btn btn-sm btn-outline-secondary me-1">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <form method="POST" action="{{ url_for('delete_programme', prog_id=p.id) }}" class="d-inline"
+                  onsubmit="return confirm('Delete programme {{ p.name }}? This will not remove past sessions.')">
+              <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="9" class="text-center text-muted py-5">No programmes yet. <a href="{{ url_for('add_programme') }}">Add one.</a></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('#statusTabs .nav-link').forEach(tab => {
+  tab.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelectorAll('#statusTabs .nav-link').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const filter = tab.dataset.filter;
+    document.querySelectorAll('#progTable tbody tr[data-status]').forEach(row => {
+      row.style.display = (filter === 'all' || row.dataset.status === filter) ? '' : 'none';
+    });
+  });
+});
+</script>
+{% endblock %}
