@@ -5,6 +5,10 @@ from datetime import datetime, timedelta, date
 app = Flask(__name__)
 app.secret_key = "sportsg-secret-2026"
 
+# Initialise DB at import time so gunicorn picks it up (not just __main__)
+with app.app_context():
+    init_db()
+
 AGE_GROUPS = ["Children (6-12)", "Youth (13-17)", "Adults (18-49)", "Seniors (50+)"]
 CATEGORIES = ["Children", "Youth", "Adults", "Seniors", "All Ages", "Persons with Disabilities"]
 STATUSES = ["Active", "Completed", "On Hold", "Cancelled"]
