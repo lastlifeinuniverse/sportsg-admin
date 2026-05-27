@@ -1,7 +1,9 @@
 import sqlite3
+import os
 from datetime import datetime
 
-DB_PATH = "sports_sg.db"
+# Absolute path so it works regardless of where gunicorn is invoked from
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sports_sg.db")
 
 
 def get_db():
